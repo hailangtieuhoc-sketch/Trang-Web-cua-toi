@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trắc nghiệm Chuyển đổi số trong giáo dục tiểu học</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        h1 {
+            text-align: center;
+            color: #0056b3;
+            margin-bottom: 20px;
+        }
+        .info-form { margin-bottom: 30px; }
+        .info-form label { font-weight: bold; display: block; margin-bottom: 5px; }
+        .info-form input[type="text"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        .question { margin-bottom: 25px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9; }
+        .question p { font-weight: bold; margin: 0 0 10px; }
+        .question label { display: block; margin-bottom: 8px; cursor: pointer; padding: 8px 12px; border-radius: 5px; transition: background-color 0.3s; }
+        .question label:hover { background-color: #e6f7ff; }
+        input[type="radio"] { margin-right: 10px; }
+        .submit-btn { display: block; width: 100%; padding: 15px; font-size: 18px; font-weight: bold; color: #fff; background-color: #007bff; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s; }
+        .submit-btn:hover { background-color: #0056b3; }
+        #results { margin-top: 30px; padding: 20px; border-radius: 8px; text-align: center; font-size: 20px; font-weight: bold; display: none; }
+        .correct { background-color: #d4edda; color: #155724; }
+        .incorrect { background-color: #f8d7da; color: #721c24; }
+        .feedback { font-style: italic; font-weight: normal; margin-top: 10px; display: none; }
+        .correct-answer { color: #28a745; font-weight: bold; }
+        .wrong-answer { color: #dc3545; text-decoration: line-through; }
+        
+        /* --- CSS cho chức năng Giảng viên --- */
+        .lecturer-login-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 8px 12px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .lecturer-login-btn:hover { background-color: #5a6268; }
+
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 25px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .modal-content h2 { margin-top: 0; }
+        .modal-content input[type="password"] { width: 90%; padding: 10px; margin: 15px 0; border: 1px solid #ccc; border-radius: 5px; }
+        .modal-content button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        .login-submit-btn { background-color: #28a745; color: white; }
+        .login-submit-btn:hover { background-color: #218838; }
+        .close-btn { background-color: #dc3545; color: white; }
+        .close-btn:hover { background-color: #c82333; }
+        #statistics-panel { display: none; margin-top: 30px; padding: 20px; background-color: #e2e3e5; border-radius: 8px; text-align: center; }
+        #statistics-panel h3 { margin-top: 0; color: #0056b3; }
+        #participant-count { font-size: 2.5em; font-weight: bold; color: #007bff; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <button class="lecturer-login-btn" onclick="openLoginModal()">🔑 Giảng viên</button>
+
+        <h1>📝 Trắc nghiệm: Chuyển đổi số trong giáo dục tiểu học</h1>
+
+        <div class="info-form">
+            <label for="fullName">Họ và tên:</label>
+            <input type="text" id="fullName" name="fullName" placeholder="Nhập họ và tên của bạn...">
+        </div>
+
+        <form id="quizForm">
+            <div class="question" id="question1">
+                <p>Câu 1: Chuyển đổi số trong giáo dục tiểu học là gì?</p>
+                <label><input type="radio" name="q1" value="A"> A. Việc thay sách giáo khoa giấy bằng sách giáo khoa mới</label>
+                <label><input type="radio" name="q1" value="B"> B. Ứng dụng công nghệ số vào dạy học, quản lý và đánh giá</label>
+                <label><input type="radio" name="q1" value="C"> C. Quá trình ứng dụng công nghệ số để nâng cao chất lượng dạy và học</label>
+                <label><input type="radio" name="q1" value="D"> D. Thay toàn bộ giáo viên bằng máy tính</label>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question" id="question2">
+                <p>Câu 2: Mục tiêu quan trọng của chuyển đổi số trong giáo dục tiểu học là:</p>
+                <label><input type="radio" name="q2" value="A"> A. Giảm số lượng học sinh trong lớp</label>
+                <label><input type="radio" name="q2" value="B"> B. Nâng cao chất lượng dạy – học, quản lý và tạo cơ hội học tập công bằng</label>
+                <label><input type="radio" name="q2" value="C"> C. Bỏ hoàn toàn việc dạy trực tiếp</label>
+                <label><input type="radio" name="q2" value="D"> D. Giúp học sinh chơi nhiều trò chơi hơn trên máy tính</label>
+                <div class="feedback"></div>
+            </div>
+            
+            <div class="question" id="question3">
+                <p>Câu 3: Một trong những lợi ích lớn nhất của chuyển đổi số trong tiểu học là:</p>
+                <label><input type="radio" name="q3" value="A"> A. Học sinh không cần đến trường</label>
+                <label><input type="radio" name="q3" value="B"> B. Giáo viên không phải chuẩn bị bài giảng</label>
+                <label><input type="radio" name="q3" value="C"> C. Chỉ dạy qua máy chiếu</label>
+                <label><input type="radio" name="q3" value="D"> D. Học sinh có môi trường học tập sinh động, phong phú và cá nhân hóa</label>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question" id="question4">
+                <p>Câu 4: Ví dụ nào dưới đây thể hiện ứng dụng chuyển đổi số trong lớp học tiểu học?</p>
+                <label><input type="radio" name="q4" value="A"> A. Giáo viên chỉ dùng phấn và bảng</label>
+                <label><input type="radio" name="q4" value="B"> B. Học sinh học thuộc lòng tất cả bài giảng</label>
+                <label><input type="radio" name="q4" value="C"> C. Sử dụng phần mềm học trực tuyến và tài nguyên số để hỗ trợ bài giảng</label>
+                <label><input type="radio" name="q4" value="D"> D. Không cho học sinh sử dụng internet</label>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question" id="question5">
+                <p>Câu 5: Thiết bị nào thường được sử dụng trong chuyển đổi số giáo dục tiểu học?</p>
+                <label><input type="radio" name="q5" value="A"> A. Máy ảnh cơ</label>
+                <label><input type="radio" name="q5" value="B"> B. Máy tính, máy tính bảng, điện thoại thông minh</label>
+                <label><input type="radio" name="q5" value="C"> C. Bút chì, thước kẻ</label>
+                <label><input type="radio" name="q5" value="D"> D. Máy in cơ học</label>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question" id="question6">
+                <p>Câu 6: Nền tảng nào hỗ trợ mạnh mẽ cho chuyển đổi số trong giáo dục?</p>
+                <label><input type="radio" name="q6" value="A"> A. Internet và các nền tảng trực tuyến</label>
+                <label><input type="radio" name="q6" value="B"> B. Thư viện truyền thống</label>
+                <label><input type="radio" name="q6" value="C"> C. Bảng đen, phấn trắng</label>
+                <label><input type="radio" name="q6" value="D"> D. Sổ điểm giấy</label>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question" id="question7">
+                <p>Câu 7: Chuyển đổi số giúp giáo viên:</p>
+                <label><input type="radio" name="q7" value="A"> A. Không cần soạn bài</label>
+                <label><input type="radio" name="q7" value="B"> B. Không phải chấm điểm</label>
+                <label><input type="radio" name="q7" value="C"> C. Quản lý lớp học hiệu quả và cá nhân hóa việc dạy học</label>
+                <label><input type="radio" name="q7" value="D"> D. Không phải trao đổi với phụ huynh</label>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question" id="question8">
+                <p>Câu 8: Chuyển đổi số trong giáo dục tiểu học giúp học sinh:</p>
+                <label><input type="radio" name="q8" value="A"> A. Không cần làm bài tập</label>
+                <label><input type="radio" name="q8" value="B"> B. Chỉ học qua video giải trí</label>
+                <label><input type="radio" name="q8" value="C"> C. Có thêm nhiều cách tiếp cận kiến thức phong phú và linh hoạt</label>
+                <label><input type="radio" name="q8" value="D"> D. Không cần tham gia giờ học</label>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question" id="question9">
+                <p>Câu 9: Một trong những thách thức lớn của chuyển đổi số trong giáo dục là:</p>
+                <label><input type="radio" name="q9" value="A"> A. Giáo viên quá nhiều thời gian rảnh</label>
+                <label><input type="radio" name="q9" value="B"> B. Học sinh không cần học nữa</label>
+                <label><input type="radio" name="q9" value="C"> C. Hạ tầng công nghệ chưa đồng bộ và năng lực số của giáo viên, học sinh còn hạn chế</label>
+                <label><input type="radio" name="q9" value="D"> D. Không cần đầu tư cơ sở vật chất</label>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question" id="question10">
+                <p>Câu 10: Trong dạy học trực tuyến, yếu tố nào quan trọng nhất?</p>
+                <label><input type="radio" name="q10" value="A"> A. Phòng học rộng rãi</label>
+                <label><input type="radio" name="q10" value="B"> B. Đường truyền internet ổn định và thiết bị phù hợp</label>
+                <label><input type="radio" name="q10" value="C"> C. Bảng đen và phấn trắng</label>
+                <label><input type="radio" name="q10" value="D"> D. Sách vở truyền thống</label>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question" id="question11">
+                <p>Câu 11: Hình thức nào sau đây KHÔNG thuộc chuyển đổi số trong giáo dục?</p>
+                <label><input type="radio" name="q11" value="A"> A. Học trực tuyến</label>
+                <label><input type="radio" name="q11" value="B"> B. Dạy học qua phần mềm tương tác</label>
+                <label><input type="radio" name="q11" value="C"> C. Dạy – học hoàn toàn bằng giấy bút truyền thống</label>
+                <label><input type="radio" name="q11" value="D"> D. Quản lý điểm số bằng phần mềm</label>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question" id="question12">
+                <p>Câu 12: Giáo viên tiểu học cần rèn luyện kỹ năng gì để thích ứng với chuyển đổi số?</p>
+                <label><input type="radio" name="q12" value="A"> A. Nấu ăn, may vá</label>
+                <label><input type="radio" name="q12" value="B"> B. Sử dụng công nghệ thông tin và thiết kế học liệu số</label>
+                <label><input type="radio" name="q12" value="C"> C. Chơi thể thao</label>
+                <label><input type="radio" name="q12" value="D"> D. Nghệ thuật truyền thống</label>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question" id="question13">
+                <p>Câu 13: Chuyển đổi số trong quản lý giáo dục tiểu học thể hiện qua:</p>
+                <label><input type="radio" name="q13" value="A"> A. Ghi chép bằng tay</label>
+                <label><input type="radio" name="q13" value="B"> B. Quản lý học sinh bằng sổ giấy</label>
+                <label><input type="radio" name="q13" value="C"> C. Tổ chức trò chơi dân gian</label>
+                <label><input type="radio" name="q13" value="D"> D. Quản lý hồ sơ, điểm số và thông tin học sinh qua phần mềm</label>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question" id="question14">
+                <p>Câu 14: Một yếu tố quan trọng để thực hiện chuyển đổi số hiệu quả là:</p>
+                <label><input type="radio" name="q14" value="A"> A. Tăng số lượng bài tập về nhà</label>
+                <label><input type="radio" name="q14" value="B"> B. Không cần phụ huynh tham gia</label>
+                <label><input type="radio" name="q14" value="C"> C. Sự phối hợp giữa nhà trường, giáo viên, phụ huynh và học sinh</label>
+                <label><input type="radio" name="q14" value="D"> D. Cắt giảm thời gian học</label>
+                <div class="feedback"></div>
+            </div>
+
+            <div class="question" id="question15">
+                <p>Câu 15: Trong tương lai, chuyển đổi số sẽ giúp giáo dục tiểu học hướng tới:</p>
+                <label><input type="radio" name="q15" value="A"> A. Dạy học chỉ qua máy móc, không cần giáo viên</label>
+                <label><input type="radio" name="q15" value="B"> B. Học sinh không cần đi học</label>
+                <label><input type="radio" name="q15" value="C"> C. Tăng cường học thuộc lòng</label>
+                <label><input type="radio" name="q15" value="D"> D. Nền giáo dục hiện đại, công bằng, chất lượng và hội nhập quốc tế</label>
+                <div class="feedback"></div>
+            </div>
+
+            <button type="button" class="submit-btn" onclick="submitQuiz()">Nộp bài</button>
+        </form>
+
+        <div id="results"></div>
+
+        <div id="statistics-panel">
+            <h3>📊 Bảng thống kê</h3>
+            <p>Tổng số lượt tham gia trả lời:</p>
+            <div id="participant-count">0</div>
+        </div>
+    </div>
+
+    <div id="lecturer-login-modal" class="modal">
+        <div class="modal-content">
+            <h2>Đăng nhập Giảng viên</h2>
+            <input type="password" id="lecturer-key" placeholder="Nhập mã bảo mật (key)...">
+            <div>
+                <button class="login-submit-btn" onclick="loginAsLecturer()">Đăng nhập</button>
+                <button class="close-btn" onclick="closeLoginModal()">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const correctAnswers = {
+            q1: 'C', q2: 'B', q3: 'D', q4: 'C', q5: 'B',
+            q6: 'A', q7: 'C', q8: 'C', q9: 'C', q10: 'B',
+            q11: 'C', q12: 'B', q13: 'D', q14: 'C', q15: 'D'
+        };
+
+        const LECTURER_KEY = "Hl2025";
+        let participantCount = 0;
+
+        // --- Chức năng chính của bài trắc nghiệm ---
+        function submitQuiz() {
+            const fullName = document.getElementById('fullName').value;
+            if (fullName.trim() === '') {
+                alert('Vui lòng nhập họ và tên của bạn!');
+                return;
+            }
+
+            // Ghi nhận một lượt tham gia mới
+            updateParticipantCount();
+
+            const form = document.getElementById('quizForm');
+            const resultsContainer = document.getElementById('results');
+            let score = 0;
+            const totalQuestions = Object.keys(correctAnswers).length;
+
+            for (let i = 1; i <= totalQuestions; i++) {
+                const questionName = 'q' + i;
+                const selectedOption = form.elements[questionName].value;
+                const questionDiv = document.getElementById('question' + i);
+                const feedbackDiv = questionDiv.querySelector('.feedback');
+                const labels = questionDiv.querySelectorAll('label');
+
+                form.elements[questionName].forEach(radio => radio.disabled = true);
+                
+                const correctAnswer = correctAnswers[questionName];
+                
+                if (selectedOption) {
+                    const selectedLabel = Array.from(labels).find(label => label.querySelector('input').value === selectedOption);
+                    const correctLabel = Array.from(labels).find(label => label.querySelector('input').value === correctAnswer);
+
+                    if (selectedOption === correctAnswer) {
+                        score++;
+                        selectedLabel.classList.add('correct-answer');
+                        feedbackDiv.innerHTML = 'Chính xác!';
+                        feedbackDiv.style.color = '#155724';
+                    } else {
+                        selectedLabel.classList.add('wrong-answer');
+                        correctLabel.classList.add('correct-answer');
+                        feedbackDiv.innerHTML = `Sai rồi! Đáp án đúng là <span class="correct-answer">${correctAnswer}</span>.`;
+                        feedbackDiv.style.color = '#721c24';
+                    }
+                } else {
+                    const correctLabel = Array.from(labels).find(label => label.querySelector('input').value === correctAnswer);
+                    correctLabel.classList.add('correct-answer');
+                    feedbackDiv.innerHTML = `Bạn chưa trả lời câu này. Đáp án đúng là <span class="correct-answer">${correctAnswer}</span>.`;
+                    feedbackDiv.style.color = '#856404';
+                }
+                feedbackDiv.style.display = 'block';
+            }
+
+            const incorrect = totalQuestions - score;
+            resultsContainer.style.display = 'block';
+
+            if (score >= 12) {
+                resultsContainer.className = 'correct';
+                resultsContainer.innerHTML = `🎉 Chúc mừng ${fullName}! 🎉<br>Bạn đã trả lời đúng ${score}/${totalQuestions} câu. <br>Bạn hiểu rất rõ về chủ đề này!`;
+            } else if (score >= 7) {
+                resultsContainer.className = '';
+                resultsContainer.style.backgroundColor = '#fff3cd';
+                resultsContainer.style.color = '#856404';
+                resultsContainer.innerHTML = `👍 Tốt lắm, ${fullName}! 👍<br>Số câu trả lời đúng: ${score}/${totalQuestions}.<br>Số câu trả lời sai: ${incorrect}/${totalQuestions}.<br>Hãy cố gắng hơn nữa nhé!`;
+            } else {
+                resultsContainer.className = 'incorrect';
+                resultsContainer.innerHTML = `🤔 Cần cố gắng hơn, ${fullName}! 🤔<br>Số câu trả lời đúng: ${score}/${totalQuestions}.<br>Số câu trả lời sai: ${incorrect}/${totalQuestions}.<br>Hãy xem lại các câu trả lời để hiểu rõ hơn nhé.`;
+            }
+            
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+            
+            const submitButton = document.querySelector('.submit-btn');
+            submitButton.disabled = true;
+            submitButton.style.backgroundColor = '#6c757d';
+            submitButton.innerHTML = 'Đã hoàn thành';
+        }
+
+        // --- Chức năng dành cho Giảng viên ---
+        const loginModal = document.getElementById('lecturer-login-modal');
+
+        function openLoginModal() {
+            loginModal.style.display = 'block';
+        }
+
+        function closeLoginModal() {
+            loginModal.style.display = 'none';
+        }
+
+        function loginAsLecturer() {
+            const inputKey = document.getElementById('lecturer-key').value;
+            if (inputKey === LECTURER_KEY) {
+                alert('Đăng nhập thành công!');
+                closeLoginModal();
+                document.getElementById('statistics-panel').style.display = 'block';
+                // Cuộn đến bảng thống kê
+                document.getElementById('statistics-panel').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                alert('Mã bảo mật không chính xác. Vui lòng thử lại!');
+            }
+            document.getElementById('lecturer-key').value = ''; // Xóa key sau khi nhập
+        }
+
+        // --- Quản lý thống kê ---
+        function loadParticipantCount() {
+            // Lấy dữ liệu từ bộ nhớ cục bộ của trình duyệt
+            const savedCount = localStorage.getItem('quizParticipantCount');
+            if (savedCount) {
+                participantCount = parseInt(savedCount, 10);
+            }
+            document.getElementById('participant-count').innerText = participantCount;
+        }
+
+        function updateParticipantCount() {
+            participantCount++;
+            // Lưu dữ liệu vào bộ nhớ cục bộ
+            localStorage.setItem('quizParticipantCount', participantCount);
+            // Cập nhật hiển thị
+            document.getElementById('participant-count').innerText = participantCount;
+        }
+
+        // Chạy khi trang được tải lần đầu
+        window.onload = function() {
+            loadParticipantCount();
+        };
+
+        // Đóng modal khi nhấn ra ngoài
+        window.onclick = function(event) {
+            if (event.target == loginModal) {
+                closeLoginModal();
+            }
+        }
+    </script>
+
+</body>
+</html>
